@@ -10,11 +10,20 @@
     "frontendDist": "../dist"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "tauri-app",
+        "label": "main",
+        "title": "cat-cafe",
         "width": 800,
-        "height": 600
+        "height": 500,
+        "resizable": false,
+        "maximizable": false,
+        "decorations": false,
+        "transparent": true,
+        "shadow": false,
+        "skipTaskbar": false,
+        "visible": false
       }
     ],
     "security": {

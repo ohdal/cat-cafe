@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* The Tauri window is transparent; the HTML surface must be transparent too,
+   otherwise the page background paints over it and you see an opaque rectangle. */
+@layer base {
+  html,
+  body,
+  #root {
+    margin: 0;
+    height: 100%;
+    background: transparent;
+  }
+}
