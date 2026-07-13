@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>가구 배치 시스템 — 레이아웃 목업</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, "Apple SD Gothic Neo", sans-serif;
+        background: #2a2a2e; color: #e5e5e5; padding: 24px;
+        display: flex; flex-direction: column; align-items: center; gap: 14px;
+      }
+      .caption { font-size: 13px; color: #b5b5bd; text-align: center; max-width: 960px; }
+      .caption b { color: #fff; }
+
+      /* 전체화면 투명 오버레이 = 모니터 전체. 여기선 대표 크기로 표현 */
+      .screen {
+        position: relative; width: min(1100px, 96vw); height: 560px; border-radius: 12px;
+        overflow: hidden;
+        /* 투명 영역 = 데스크탑. 목업에선 바탕화면 느낌으로 표현 */
+        background: repeating-linear-gradient(45deg, #4b5563 0 22px, #52525b 22px 44px);
+        box-shadow: 0 12px 44px rgba(0, 0, 0, 0.5);
+      }
+      .desktop-note {
+        position: absolute; top: 12px; left: 12px; font-size: 12px; color: rgba(255,255,255,0.55);
+      }
+
+      /* 하단 카페 바 (오버레이 하단 밴드, ~240px) */
+      .bar {
+        position: absolute; left: 0; right: 0; bottom: 0; height: 240px;
+        border-radius: 16px 16px 0 0; overflow: hidden;
+        background: linear-gradient(to bottom, #262626, #0a0a0a);
+      }
+      .wall  { position: absolute; inset: 0 0 auto 0; height: 90%; background: #fecdd3; }
+      .floor { position: absolute; inset: auto 0 0 0; height: 10%; background: #b45309; }
+      .layer-label { font-size: 11px; padding: 6px; opacity: 0.55; }
+      .wall .layer-label { color: #7f1d1d; }
+      .floor .layer-label { color: #fff7ed; }
+      .counter {
+        position: absolute; right: 0; bottom: 10%; width: 176px; height: 34%;
+        background: #78716c; display: flex; align-items: flex-end; justify-content: center;
+        font-size: 11px; color: rgba(255,255,255,0.8); padding: 6px;
+      }
+      .menuboard {
+        position: absolute; right: 16px; top: 64px; width: 112px; height: 40px;
+        background: #065f46; border-radius: 6px; display: flex; align-items: center;
+        justify-content: center; font-size: 11px; color: rgba(255,255,255,0.85);
+      }
+      .cat {
+        position: absolute; left: 40%; bottom: 10%; font-size: 20px;
+      }
+
+      /* 배치된 가구 (클릭 시 재배치) */
+      .placed {
+        position: absolute; left: 140px; bottom: 10%; width: 90px; height: 56px;
+        background: #7c5a34; border-radius: 4px; display: flex; align-items: center;
+        justify-content: center; font-size: 11px; color: #fff; cursor: pointer;
+      }
+      /* 배치 중 반투명 ghost (마우스 추적, 요구 5) */
+      .ghost {
+        position: absolute; left: 300px; bottom: 10%; width: 90px; height: 56px;
+        background: rgba(120, 80, 40, 0.45); border: 2px dashed rgba(255,255,255,0.7);
+        border-radius: 4px; display: flex; align-items: center; justify-content: center;
+        font-size: 11px; color: #fff;
+      }
+      .ghost .cursor { position: absolute; right: -6px; bottom: -6px; font-size: 16px; }
+
+      /* HUD (바 우측 상단) */
+      .hud { position: absolute; top: 8px; right: 8px; display: flex; align-items: center; gap: 6px; }
+      .pill {
+        display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.4);
+        color: #fde68a; font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 999px;
+      }
+      .icon-btn {
+        position: relative;
+        display: flex; align-items: center; justify-content: center; width: 28px; height: 28px;
+        background: rgba(255,255,255,0.15); border-radius: 6px; font-size: 13px; cursor: pointer;
+      }
+      .icon-btn.active { background: #d97706; }
+      /* active 테두리는 box 크기에 영향 주지 않도록 ::after 오버레이로 */
+      .icon-btn.active::after {
+        content: ""; position: absolute; inset: 0; border-radius: inherit;
+        border: 2px solid rgba(253, 230, 138, 0.9); pointer-events: none;
+      }
+
+      /* 인벤토리 — 오버레이 상단 중앙 (카페 바 바깥, 요구 2) */
+      /* 카페 바(240px) 바로 위, gap 12px */
+      .inventory {
+        position: absolute; bottom: 252px; left: 50%; transform: translateX(-50%);
+        width: 300px; background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 10px; padding: 8px; z-index: 5; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      }
+      .inv-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+      .inv-title { font-size: 12px; font-weight: 700; color: #e2e8f0; }
+      .placing-badge {
+        font-size: 11px; color: #fde68a; background: rgba(217,119,6,0.25);
+        border: 1px solid rgba(217,119,6,0.6); border-radius: 999px; padding: 2px 8px;
+      }
+      .inv-grid {
+        display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+        max-height: 156px; overflow-y: auto; /* 3행 노출 후 스크롤 (요구 3) */
+      }
+      .cell {
+        position: relative; aspect-ratio: 1; background: rgba(255,255,255,0.06);
+        border-radius: 6px; display: flex; align-items: center; justify-content: center;
+        font-size: 18px; cursor: pointer;
+      }
+      .cell.empty { cursor: default; }
+      /* 배치중(selected) 테두리도 ::after 오버레이로 (width 영향 X), 점선 */
+      .cell.placing::after {
+        content: ""; position: absolute; inset: 0; border-radius: inherit;
+        border: 2px dashed #d97706; pointer-events: none;
+      }
+      /* 이미 배치된 가구: 셀 하단 중앙 배지 */
+      .cell .placed-badge {
+        position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+        font-size: 8px; line-height: 1; white-space: nowrap;
+        background: #16a34a; color: #fff; padding: 1px 4px; border-radius: 4px;
+      }
+      /* 공용 Tooltip */
+      .cell .tooltip {
+        position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+        background: #111827; color: #fff; font-size: 11px; white-space: nowrap;
+        padding: 3px 7px; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity 0.12s;
+      }
+      .cell .tooltip::after {
+        content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+        border: 4px solid transparent; border-top-color: #111827;
+      }
+      .cell:hover .tooltip, .cell.show-tip .tooltip { opacity: 1; }
+
+      .legend { font-size: 12px; color: #b5b5bd; max-width: 960px; line-height: 1.6; }
+      .legend code { background: #1f1f24; padding: 1px 5px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <div class="caption">
+      <b>가구 배치 시스템 — 러프 레이아웃 목업 (전체화면 투명 오버레이)</b><br />
+      빗금 = 투명 영역(데스크탑, 클릭 통과). 하단 = 카페 바, 상단 중앙 = 인벤토리. "책상 배치 중" 상태 가정.
+    </div>
+
+    <div class="screen">
+      <div class="desktop-note">↖ 투명 영역 (데스크탑 그대로 보이고 클릭 통과)</div>
+
+      <!-- 인벤토리: 오버레이 상단 중앙 (바 바깥) -->
+      <div class="inventory">
+        <div class="inv-header">
+          <span class="inv-title">가구 인벤토리</span>
+          <span class="placing-badge">배치 중: 책상</span>
+        </div>
+        <div class="inv-grid">
+          <div class="cell placing show-tip">🪵<span class="tooltip">책상</span></div>
+          <div class="cell">🪑<span class="placed-badge">배치완료</span><span class="tooltip">의자</span></div>
+          <div class="cell">🖼️<span class="tooltip">액자</span></div>
+          <div class="cell empty"></div><div class="cell empty"></div>
+          <div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div>
+          <div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div>
+          <div class="cell empty"></div><div class="cell empty"></div><div class="cell empty"></div>
+        </div>
+      </div>
+
+      <!-- 하단 카페 바 -->
+      <div class="bar">
+        <div class="wall"><div class="layer-label">Wall</div></div>
+        <div class="floor"><div class="layer-label">Floor</div></div>
+        <div class="counter">Counter</div>
+        <div class="menuboard">MenuBoard</div>
+        <div class="cat">🐈</div>
+        <div class="placed">🪑 의자 (배치됨)</div>
+        <div class="ghost">🪵 책상<span class="cursor">🖱️</span></div>
+        <div class="hud">
+          <div class="pill">🪙 0</div>
+          <div class="icon-btn">🛒</div>
+          <div class="icon-btn">⚙️</div>
+          <div class="icon-btn active" title="가구 배치 (요구 1)">🪑</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend">
+      · 창 = <b>전체화면 투명 오버레이</b>. 빗금 영역은 투명이라 데스크탑이 보이고 클릭이 통과됨(상호작용 영역 위에서만 통과 OFF).<br />
+      · <b>인벤토리</b>는 카페 바 <b>바깥, 화면 상단 중앙</b>. 5×3 노출 후 스크롤.<br />
+      · 배치 중 가구는 셀에 주황 <b>점선</b> 테두리(<code>::after</code>), 헤더에 <code>배치 중: 책상</code> 뱃지.<br />
+      · 이미 배치된 가구(의자)는 셀 <b>하단 중앙</b>에 <code>배치완료</code> 배지.<br />
+      · 셀 호버 시 이름 툴팁(공용 <code>Tooltip</code>) — 첫 셀은 데모 강제 표시.<br />
+      · 하단 바: 씬(Wall/Floor/Counter/MenuBoard) + 고양이(🐈, 카페 영역 내) + 배치된 의자 + <code>ghost</code>(점선 반투명, 마우스 추적).<br />
+      · 가구 3종: 책상 🪵 · 의자 🪑 · 액자 🖼️(벽에만 배치). 아이템은 겹쳐 배치 가능.<br />
+      · 배치 중 <b>마우스 휠</b>로 z-order 조절 — <b>겹치는 가구 기준</b>으로만(안 겹치는 건 건너뜀).<br />
+      · HUD 우측 끝 <code>🪑</code> = 가구 배치 토글(활성 강조). 우클릭 = 배치 취소.
+    </div>
+  </body>
+</html>
