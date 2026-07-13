@@ -16,7 +16,7 @@
         "label": "main",
         "title": "cat-cafe",
         "width": 800,
-        "height": 500,
+        "height": 240,
         "resizable": false,
         "maximizable": false,
         "decorations": false,

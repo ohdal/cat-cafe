@@ -5,16 +5,19 @@ use sidecar::SidecarState;
 use tauri::{LogicalPosition, LogicalSize, Manager, State, WebviewWindow};
 
 /// Height of the bottom app bar, in logical (CSS) pixels.
-const BAR_HEIGHT: f64 = 500.0;
+const BAR_HEIGHT: f64 = 240.0;
 
 /// Resize the window into a full-width, fixed-height bar pinned to the bottom of
-/// the monitor, then reveal it. Width and position depend on the monitor, so this
-/// runs at runtime rather than being hard-coded in tauri.conf.json.
+/// the monitor's work area, then reveal it. Width and position depend on the
+/// monitor, so this runs at runtime rather than being hard-coded in tauri.conf.json.
 fn position_bottom_bar(win: &WebviewWindow) -> tauri::Result<()> {
     if let Some(monitor) = win.current_monitor()?.or(win.primary_monitor()?) {
         let scale = monitor.scale_factor();
-        let origin = monitor.position().to_logical::<f64>(scale);
-        let size = monitor.size().to_logical::<f64>(scale);
+        // work_area excludes OS chrome (on macOS, the Dock and menu bar), so the
+        // bar sits within the usable region instead of hiding behind the Dock.
+        let area = monitor.work_area();
+        let origin = area.position.to_logical::<f64>(scale);
+        let size = area.size.to_logical::<f64>(scale);
         win.set_size(LogicalSize::new(size.width, BAR_HEIGHT))?;
         win.set_position(LogicalPosition::new(
             origin.x,
