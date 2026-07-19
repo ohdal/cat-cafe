@@ -15,7 +15,7 @@ export default function IconButton({
   return (
     <button
       type={type}
-      className={`flex items-center justify-center rounded-md bg-white/15 px-2 py-1 text-xs text-white transition hover:bg-white/25 active:scale-95 ${className}`}
+      className={`flex items-center justify-center rounded-md bg-[#ffffff26] px-2 py-1 text-xs text-white transition hover:bg-[#ffffff40] active:scale-95 ${className}`}
       {...props}
     >
       {children}

@@ -1,5 +1,5 @@
-import IconButton from "./IconButton";
-import SolidButton from "./SolidButton";
+import IconButton from "@/components/ButtonComp/IconButton";
+import SolidButton from "@/components/ButtonComp/SolidButton";
 
 /**
  * 버튼 variant 네임스페이스. dot notation으로 사용.
