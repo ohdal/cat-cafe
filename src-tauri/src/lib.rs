@@ -1,41 +1,28 @@
+mod overlay;
 mod sidecar;
 
+use overlay::{set_interactive_rects, start_click_through_loop, InteractiveRects};
 use serde_json::Value;
 use sidecar::SidecarState;
 use tauri::{LogicalPosition, LogicalSize, Manager, State, WebviewWindow};
 
-/// Height of the bottom app bar, in logical (CSS) pixels.
-const BAR_HEIGHT: f64 = 240.0;
-
-/// Resize the window into a full-width, fixed-height bar pinned to the bottom of
-/// the monitor's work area, then reveal it. Width and position depend on the
-/// monitor, so this runs at runtime rather than being hard-coded in tauri.conf.json.
-fn position_bottom_bar(win: &WebviewWindow) -> tauri::Result<()> {
+/// Size the window to fully cover the monitor's work area (fullscreen transparent
+/// overlay), then reveal it. The cafe bar (bottom band) and the inventory/modals
+/// above it are positioned within this window via CSS.
+///
+/// work_area excludes OS chrome (on macOS, the Dock and menu bar), so the overlay
+/// doesn't fight the Dock.
+fn position_overlay(win: &WebviewWindow) -> tauri::Result<()> {
     if let Some(monitor) = win.current_monitor()?.or(win.primary_monitor()?) {
         let scale = monitor.scale_factor();
-        // work_area excludes OS chrome (on macOS, the Dock and menu bar), so the
-        // bar sits within the usable region instead of hiding behind the Dock.
         let area = monitor.work_area();
         let origin = area.position.to_logical::<f64>(scale);
         let size = area.size.to_logical::<f64>(scale);
-        win.set_size(LogicalSize::new(size.width, BAR_HEIGHT))?;
-        win.set_position(LogicalPosition::new(
-            origin.x,
-            origin.y + size.height - BAR_HEIGHT,
-        ))?;
+        win.set_size(LogicalSize::new(size.width, size.height))?;
+        win.set_position(LogicalPosition::new(origin.x, origin.y))?;
     }
     win.show()?;
     Ok(())
-}
-
-/// Toggle whether the (transparent) window passes mouse events through to whatever
-/// is behind it. Enable this over transparent zones so the desktop stays clickable;
-/// disable it over the actual app UI so it can be interacted with.
-#[tauri::command]
-fn set_click_through(window: WebviewWindow, ignore: bool) -> Result<(), String> {
-    window
-        .set_ignore_cursor_events(ignore)
-        .map_err(|e| e.to_string())
 }
 
 /// Generic escape hatch: forward any `{ method, params }` to the sidecar.
@@ -80,6 +67,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_shell::init())
         .manage(SidecarState::default())
+        .manage(InteractiveRects::default())
         .setup(|app| {
             // Don't hard-crash if the sidecar binary is missing (e.g. before the
             // first `pnpm sidecar:package`); surface it and let commands report it.
@@ -87,9 +75,10 @@ pub fn run() {
                 eprintln!("[sidecar] failed to start: {e}");
             }
             if let Some(win) = app.get_webview_window("main") {
-                if let Err(e) = position_bottom_bar(&win) {
-                    eprintln!("[window] failed to position bottom bar: {e}");
+                if let Err(e) = position_overlay(&win) {
+                    eprintln!("[window] failed to size overlay: {e}");
                 }
+                start_click_through_loop(app.handle().clone(), win);
             }
             Ok(())
         })
@@ -97,7 +86,7 @@ pub fn run() {
             sidecar_invoke,
             sidecar_ping,
             steam_login,
-            set_click_through
+            set_interactive_rects
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

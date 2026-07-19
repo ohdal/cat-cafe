@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Tailwind v4 wraps `hover:`/`group-hover:` in `@media (hover: hover)` by default
+   (to avoid sticky-hover on touchscreens). This Tauri/WebKit webview evaluates that
+   media feature as false, so every hover effect in the app was silently dead. Drop
+   the guard so hover just means `:hover`. */
+@custom-variant hover (&:hover);
+
 /* The Tauri window is transparent; the HTML surface must be transparent too,
    otherwise the page background paints over it and you see an opaque rectangle. */
 @layer base {
