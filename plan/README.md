@@ -9,3 +9,4 @@ cat-cafe 기능/작업 계획서를 모아두는 폴더.
 ## 기능 계획
 
 - [furniture-placement](furniture-placement/README.md) — 가구 배치 시스템
+- [furniture-removal](furniture-removal/README.md) — 가구 삭제 (호버 휴지통 아이콘)
