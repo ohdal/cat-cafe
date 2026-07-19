@@ -1,8 +1,11 @@
-/** 벽지. 카페 상단 배경. 나중에 상점 스킨으로 교체 예정 (임시 placeholder). */
+import { useDecorStore } from "@/features/decor/skins/useDecorStore";
+import { WALL_SKINS } from "@/features/decor/skins/catalog";
+import { skinFillStyle } from "@/features/decor/skins/skinFill";
+
+/** 벽지. 카페 상단 배경. 상점에서 고른 스킨(색상 또는 이미지)을 반영한다. */
 export default function Wall() {
-  return (
-    <div className="absolute inset-x-0 top-0 flex h-[90%] items-start justify-start bg-rose-200 p-2 text-xs text-rose-900/60">
-      Wall (벽지)
-    </div>
-  );
+  const activeSkin = useDecorStore((s) => s.activeWallSkin);
+  const skin = WALL_SKINS.find((s) => s.id === activeSkin) ?? WALL_SKINS[0];
+
+  return <div className="absolute inset-x-0 top-0 h-[90%]" style={skinFillStyle(skin.fill)} />;
 }

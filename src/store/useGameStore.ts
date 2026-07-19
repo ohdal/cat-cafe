@@ -27,7 +27,7 @@ interface GameState {
 export const useGameStore = create<GameState>()(
   persist(
     (set, get) => ({
-      currency: 0,
+      currency: 1000, // 테스트용 재화 충전. 나중에 밸런스 정해지면 조정.
       addCurrency: (amount) => set((s) => ({ currency: s.currency + amount })),
       spendCurrency: (amount) => {
         if (get().currency < amount) return false;
@@ -38,7 +38,8 @@ export const useGameStore = create<GameState>()(
     }),
     {
       name: "cat-cafe-game",
-      version: 1,
+      // 버전 올려서 기존 저장된 재화 값을 무시하고 새 초기값(1000)으로 리셋.
+      version: 2,
       // 데이터만 저장 (액션 함수는 제외).
       partialize: (s) => ({ currency: s.currency }),
     },
