@@ -50,7 +50,7 @@ export default function FurniturePanel() {
   }
 
   return (
-    <div className={PANEL_PADDING}>
+    <div className={`flex h-full flex-col ${PANEL_PADDING}`}>
       <div className="mb-2 flex items-center justify-between gap-2">
         <DecorTabBar tab={tab} onChange={setTab} />
         <button
@@ -67,11 +67,11 @@ export default function FurniturePanel() {
         </button>
       </div>
       {entries.length === 0 ? (
-        <div className="h-72">
+        <div className="min-h-0 flex-1">
           <Empty />
         </div>
       ) : (
-        <div className="grid h-72 grid-cols-5 grid-rows-3 gap-1.5 overflow-y-auto">
+        <div className="no-scrollbar grid min-h-0 flex-1 grid-cols-5 auto-rows-22.5 gap-1.5 overflow-y-auto">
           {entries.map((entry) =>
             entry.kind === "furniture" ? (
               <InventorySlot key={`f-${entry.item.id}`} type={entry.item} />

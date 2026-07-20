@@ -10,6 +10,7 @@ export interface Skin {
   id: string;
   kind: SkinKind;
   name: string;
+  description: string; // 상점 상세 화면 설명
   price: number;
   fill: SkinFill;
 }
