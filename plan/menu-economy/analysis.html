@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>카페 경제 · 진행 분석</title>
+<style>
+  :root{
+    --bg:#1c1712; --card:#2a221b; --ink:#f3e9dc; --sub:#c8b8a4; --line:#4a3c2e;
+    --gold:#e0a83e; --green:#7fae5a; --blue:#6fa8c9; --red:#d47a6a; --grid:#3a2f24;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",sans-serif;
+       line-height:1.5;padding:24px}
+  h1{font-size:22px;margin:0 0 4px}
+  .muted{color:var(--sub);font-size:13px;margin:0 0 20px}
+  .wrap{max-width:960px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:16px 0}
+  .card h2{font-size:16px;margin:0 0 2px}
+  .card p.note{color:var(--sub);font-size:12px;margin:0 0 14px}
+  .kpis{display:flex;flex-wrap:wrap;gap:12px}
+  .kpi{flex:1 1 200px;background:#221b15;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .kpi .v{font-size:20px;font-weight:700;color:var(--gold)}
+  .kpi .l{font-size:12px;color:var(--sub)}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  th,td{padding:6px 8px;border-bottom:1px solid var(--grid);text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--sub);font-weight:600}
+  .bad{color:var(--red);font-weight:700}
+  svg{width:100%;height:auto;display:block}
+  .barlabel{fill:var(--ink);font-size:12px}
+  .barval{fill:var(--sub);font-size:11px}
+  .axis{stroke:var(--grid);stroke-width:1}
+  .warn{border-color:#6d4b3f;background:#2f211b}
+  .legend{display:flex;gap:16px;font-size:12px;color:var(--sub);margin-top:8px}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🐾 카페 경제 · 진행 분석</h1>
+  <p class="muted">계획서 <code>plan/menu-economy/README.md</code> 수치 기준 · 그리디(ROI 최적) 전략 + 24h 연속 방치 · 시작 골드 5,000 · 확장은 골드 비용만 게이팅</p>
+
+  <div class="card">
+    <h2>확정 수치</h2>
+    <div class="kpis">
+      <div class="kpi"><div class="v">88,552 G/h</div><div class="l">최대 수익 (Lv7 · 전메뉴 L10) ≈ 24.6 골드/초</div></div>
+      <div class="kpi"><div class="v">약 530만</div><div class="l">풀업까지 필요한 총 골드 (확장 92%)</div></div>
+      <div class="kpi"><div class="v">7.2일</div><div class="l">Lv7 도달 (시작골드 5,000 · 24h 방치)</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>① 카페 레벨별 최대 수익 (전 메뉴 L10)</h2>
+    <p class="note">레벨당 약 ×1.7~1.9 성장 (등급배수 +0.5 + 신메뉴 해금 복합)</p>
+    <svg id="c1" viewBox="0 0 900 300"></svg>
+  </div>
+
+  <div class="card">
+    <h2>② 7층 도달까지 누적 시간 (일)</h2>
+    <p class="note">시작골드 5,000 · 24h 연속 방치 기준. 오프라인 상한(8h) 고려 시 체감 약 11~22일.</p>
+    <svg id="c2" viewBox="0 0 900 300"></svg>
+  </div>
+
+  <div class="card">
+    <h2>③ 메뉴 수익 곡선 vs 업그레이드 비용 (예: 아메리카노 base 10)</h2>
+    <p class="note">레벨업 = 곧 진행(별도 경험치 없음). 수익 ×1.35/레벨(L0 10 → L10 201), 비용 ×1.6/레벨</p>
+    <svg id="c3" viewBox="0 0 900 320"></svg>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--green)"></span>시간당 수익</span>
+      <span><span class="dot" style="background:var(--red)"></span>다음 레벨 비용</span>
+    </div>
+  </div>
+
+  <div class="card warn">
+    <h2>⚠ 초반 페이싱 → 시작 골드로 완화</h2>
+    <p class="note">무보정 시 시작 0.018 G/s → 첫 확장까지 ~30시간으로 답답. <b>시작 골드 5,000</b> 지급으로 완화(채택). 단, 시작 골드는 초반 벽만 없애고 Lv7 도달(~7일)엔 거의 영향 없음(총비용 530만 대비 미미).</p>
+    <table>
+      <tr><th>시작 골드</th><th>첫 업글</th><th>첫 확장</th><th>Lv7</th><th>풀업</th></tr>
+      <tr><td>0</td><td>19분</td><td>30.3시간</td><td>8.1일</td><td>8.2일</td></tr>
+      <tr><td>2,000</td><td>즉시</td><td>17.7시간</td><td>7.6일</td><td>7.6일</td></tr>
+      <tr style="color:var(--gold);font-weight:700"><td>5,000 (채택)</td><td>즉시</td><td>9.6시간</td><td>7.2일</td><td>7.3일</td></tr>
+      <tr><td>10,000</td><td>즉시</td><td>즉시</td><td>6.8일</td><td>6.9일</td></tr>
+      <tr><td>50,000</td><td>즉시</td><td>즉시</td><td>6.0일</td><td>6.1일</td></tr>
+    </table>
+    <p class="note" style="margin-top:8px">확장은 <b>골드 비용만</b>(모으면 됨). Gold/Hour 게이트는 <b>고양이 품종 해금 전용</b>이며 각 시점 도달 가능하게 잡을 것(알바생은 2F+라 1F 관문엔 꾸밈·고양이 배수만 기여).</p>
+  </div>
+
+  <div class="card">
+    <h2>수치 표</h2>
+    <table>
+      <tr><th>카페 Lv</th><th>해금 메뉴</th><th>G/h (전메뉴 L0)</th><th>G/h (전메뉴 L10)</th><th>도달 누적 시간<br>(시작골드 5,000)</th></tr>
+      <tr><td>1</td><td>5</td><td>64</td><td>1,286</td><td>0</td></tr>
+      <tr><td>2</td><td>8</td><td>186</td><td>3,738</td><td>9.6시간</td></tr>
+      <tr><td>3</td><td>11</td><td>416</td><td>8,362</td><td>1.3일</td></tr>
+      <tr><td>4</td><td>14</td><td>820</td><td>16,485</td><td>2.0일</td></tr>
+      <tr><td>5</td><td>17</td><td>1,506</td><td>30,279</td><td>2.9일</td></tr>
+      <tr><td>6</td><td>20</td><td>2,618</td><td>52,640</td><td>4.4일</td></tr>
+      <tr><td>7</td><td>23</td><td>4,404</td><td>88,552</td><td>7.2일</td></tr>
+    </table>
+  </div>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+function el(n,a){const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);return e;}
+function txt(x,y,s,cls,anchor){const t=el("text",{x,y,class:cls||"barlabel"});if(anchor)t.setAttribute("text-anchor",anchor);t.textContent=s;return t;}
+
+// ① 카페 레벨별 최대 G/h (horizontal bars)
+(function(){
+  const svg=document.getElementById("c1");
+  const data=[["Lv1",1286],["Lv2",3738],["Lv3",8362],["Lv4",16485],["Lv5",30279],["Lv6",52640],["Lv7",88552]];
+  const W=900,H=300,padL=54,padR=110,top=10,gap=8;
+  const max=88552, bh=(H-top*2-gap*(data.length-1))/data.length;
+  data.forEach((d,i)=>{
+    const y=top+i*(bh+gap), w=(W-padL-padR)*(d[1]/max);
+    svg.appendChild(txt(padL-8,y+bh/2+4,d[0],"barlabel","end"));
+    svg.appendChild(el("rect",{x:padL,y,width:Math.max(w,2),height:bh,rx:4,fill:"var(--gold)"}));
+    svg.appendChild(txt(padL+Math.max(w,2)+8,y+bh/2+4,d[1].toLocaleString()+" G/h","barval"));
+  });
+})();
+
+// ② 누적 시간 (bars, days)
+(function(){
+  const svg=document.getElementById("c2");
+  const data=[["Lv2",0.4],["Lv3",1.33],["Lv4",2.0],["Lv5",2.9],["Lv6",4.4],["Lv7",7.2]];
+  const W=900,H=300,padL=54,padR=90,top=10,gap=10;
+  const max=7.3, bh=(H-top*2-gap*(data.length-1))/data.length;
+  data.forEach((d,i)=>{
+    const y=top+i*(bh+gap), w=(W-padL-padR)*(d[1]/max);
+    svg.appendChild(txt(padL-8,y+bh/2+4,d[0],"barlabel","end"));
+    svg.appendChild(el("rect",{x:padL,y,width:Math.max(w,2),height:bh,rx:4,fill:"var(--blue)"}));
+    svg.appendChild(txt(padL+Math.max(w,2)+8,y+bh/2+4,d[1]+"일","barval"));
+  });
+})();
+
+// ③ 메뉴 수익 vs 비용 (line, dual)
+(function(){
+  const svg=document.getElementById("c3");
+  const income=[10,14,18,25,33,45,61,82,110,149,201];
+  const cost=[20,32,51,82,131,210,336,537,859,1374,null]; // L10엔 다음 비용 없음
+  const W=900,H=320,padL=48,padR=48,padT=16,padB=34;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const maxY=Math.max(...income, ...cost.filter(v=>v!=null));
+  const x=i=>padL+plotW*(i/10);
+  const y=v=>padT+plotH*(1-v/maxY);
+  // grid + x labels
+  for(let i=0;i<=10;i++){
+    svg.appendChild(el("line",{x1:x(i),y1:padT,x2:x(i),y2:padT+plotH,class:"axis",opacity:i%1?0:0.5}));
+    svg.appendChild(txt(x(i),H-14,"L"+i,"barval","middle"));
+  }
+  function path(arr,color){
+    let d="";arr.forEach((v,i)=>{if(v==null)return;d+=(d?"L":"M")+x(i)+" "+y(v)+" ";});
+    svg.appendChild(el("path",{d,fill:"none",stroke:color,"stroke-width":2.5}));
+    arr.forEach((v,i)=>{if(v==null)return;svg.appendChild(el("circle",{cx:x(i),cy:y(v),r:3,fill:color}));});
+  }
+  path(cost,"var(--red)");
+  path(income,"var(--green)");
+  // value labels at endpoints
+  svg.appendChild(txt(x(10)-4,y(201)-8,"201 G/h","barval","end"));
+  svg.appendChild(txt(x(0)+6,y(10)-8,"10","barval","start"));
+})();
+</script>
+</body>
+</html>

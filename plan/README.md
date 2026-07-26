@@ -10,3 +10,4 @@ cat-cafe 기능/작업 계획서를 모아두는 폴더.
 
 - [furniture-placement](furniture-placement/README.md) — 가구 배치 시스템
 - [furniture-removal](furniture-removal/README.md) — 가구 삭제 (호버 휴지통 아이콘)
+- [menu-economy](menu-economy/README.md) — 카페 레벨(1~7)·메뉴·재화(경제) 시스템: Gold/Hour 초당 적립 엔진 + 카페 레벨 해금 게이트 + 메뉴 업그레이드
