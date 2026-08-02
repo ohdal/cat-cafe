@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>층 이동 시스템 — 레이아웃 목업</title>
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, "Apple SD Gothic Neo", sans-serif;
+        background: #2a2a2e; color: #e5e5e5; padding: 24px;
+        display: flex; flex-direction: column; align-items: center; gap: 14px;
+      }
+      .caption { font-size: 13px; color: #b5b5bd; text-align: center; max-width: 960px; }
+      .caption b { color: #fff; }
+
+      .screen {
+        position: relative; width: min(1100px, 96vw); height: 560px; border-radius: 12px;
+        overflow: hidden;
+        background: repeating-linear-gradient(45deg, #4b5563 0 22px, #52525b 22px 44px);
+        box-shadow: 0 12px 44px rgba(0, 0, 0, 0.5);
+      }
+      .desktop-note {
+        position: absolute; top: 12px; left: 12px; font-size: 12px; color: rgba(255,255,255,0.55);
+      }
+
+      /* 하단 카페 바 (오버레이 하단 밴드, 240px) = shaft를 들여다보는 뷰포트 */
+      .bar {
+        position: absolute; left: 0; right: 0; bottom: 0; height: 240px;
+        border-radius: 16px 16px 0 0; overflow: hidden;
+        background: linear-gradient(to bottom, #262626, #0a0a0a);
+      }
+
+      /* shaft: 이동 구간(1F~5F)의 층을 "물리적 순서"(위=고층, 아래=저층)로 쌓은 컨테이너.
+         이 하나의 요소만 translateY로 움직인다 — 두 씬을 슬라이드하는 게 아니라
+         건물 전체가 뷰포트 앞을 지나가는 모델. */
+      .shaft {
+        position: absolute; left: 0; right: 0; top: 0;
+        height: calc(240px * 5); /* 5개 층 슬라이스 */
+        transition: transform 0.6s ease-in-out;
+        transform: translateY(-960px); /* 시작: 1F가 보이도록 (offset 계산은 legend 참고) */
+      }
+      .floor-slice { position: relative; height: 240px; }
+      .floor-slice .wall  { position: absolute; inset: 0 0 auto 0; height: 90%; }
+      .floor-slice .floor { position: absolute; inset: auto 0 0 0; height: 10%; }
+      .floor-slice .layer-label { font-size: 11px; padding: 6px; opacity: 0.6; }
+      .floor-label {
+        position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%);
+        font-size: 34px; font-weight: 800; color: rgba(255,255,255,0.18);
+      }
+      .counter {
+        position: absolute; right: 0; bottom: 10%; width: 176px; height: 34%;
+        background: #78716c; display: flex; align-items: flex-end; justify-content: center;
+        font-size: 11px; color: rgba(255,255,255,0.8); padding: 6px;
+      }
+      .menuboard {
+        position: absolute; right: 16px; top: 64px; width: 112px; height: 40px;
+        background: #065f46; border-radius: 6px; display: flex; align-items: center;
+        justify-content: center; font-size: 11px; color: rgba(255,255,255,0.85);
+      }
+      .furniture {
+        position: absolute; left: 140px; bottom: 10%; width: 90px; height: 56px;
+        background: #7c5a34; border-radius: 4px; display: flex; align-items: center;
+        justify-content: center; font-size: 11px; color: #fff;
+      }
+      /* 층마다 살짝 다른 톤(데모 구분용 — 실제론 결정 사항대로 전 층 동일 스킨 공유) */
+      #slice-5F .wall { background: #bfdbfe; } #slice-5F .floor { background: #1e3a8a; }
+      #slice-4F .wall { background: #c7d2fe; } #slice-4F .floor { background: #312e81; }
+      #slice-3F .wall { background: #ddd6fe; } #slice-3F .floor { background: #4c1d95; }
+      #slice-2F .wall { background: #e9d5ff; } #slice-2F .floor { background: #581c87; }
+      #slice-1F .wall { background: #fecdd3; } #slice-1F .floor { background: #b45309; }
+      .floor-slice .wall .layer-label,
+      .floor-slice .floor .layer-label { color: rgba(0,0,0,0.55); }
+
+      /* HUD 좌우 대칭: 우측 = 기존 Hud(재화+햄버거), 좌측 = 신규 FloorIndicator */
+      .hud-right { position: absolute; top: 8px; right: 8px; z-index: 6; display: flex; align-items: center; gap: 6px; }
+      .hud-left  { position: absolute; top: 8px; left: 8px; z-index: 6; }
+      .pill {
+        display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.4);
+        color: #fde68a; font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 999px;
+      }
+      .icon-btn {
+        display: flex; align-items: center; justify-content: center; width: 28px; height: 28px;
+        background: rgba(255,255,255,0.15); border-radius: 6px; font-size: 13px; cursor: pointer;
+      }
+      .floor-btn {
+        display: flex; align-items: center; justify-content: center; height: 28px; padding: 0 10px;
+        background: rgba(0,0,0,0.4); color: #fde68a; border-radius: 999px;
+        font-size: 12px; font-weight: 700; cursor: pointer; border: none;
+      }
+
+      /* 층 선택 모달 — CafeMenuPanel과 동일한 modal-* 토큰 계열(화이트+그레이+하늘색) */
+      .floor-modal {
+        position: absolute; bottom: 252px; left: 50%; transform: translateX(-50%);
+        width: 220px; background: #f5f6f8; border: 1px solid #c2c9d6;
+        border-radius: 10px; padding: 8px; z-index: 8; box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        color: #262626; display: none;
+      }
+      .floor-modal.open { display: block; }
+      .floor-modal .close {
+        position: absolute; right: 8px; top: 8px; width: 20px; height: 20px; border-radius: 999px;
+        background: #d5dae3; display: flex; align-items: center; justify-content: center;
+        font-size: 11px; cursor: pointer;
+      }
+      .floor-modal h3 { font-size: 13px; text-align: center; margin-bottom: 8px; }
+      .floor-row {
+        position: relative; display: flex; align-items: center; justify-content: space-between;
+        padding: 6px 8px; border-radius: 6px; margin-bottom: 4px; font-size: 12px;
+        background: #e8ebf0; cursor: pointer;
+      }
+      .floor-row.current { outline: 2px solid #a9cff5; outline-offset: -2px; }
+      .floor-row.locked { cursor: not-allowed; }
+      .floor-row .lock-overlay {
+        position: absolute; inset: 0; border-radius: inherit; background: rgba(0,0,0,0.7);
+        display: flex; align-items: center; justify-content: center; gap: 4px;
+        color: #fff; font-size: 11px;
+      }
+
+      .legend { font-size: 12px; color: #b5b5bd; max-width: 960px; line-height: 1.6; }
+      .legend code { background: #1f1f24; padding: 1px 5px; border-radius: 4px; }
+
+      .controls { display: flex; gap: 8px; }
+      .controls button {
+        font-size: 12px; padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer;
+        background: #a9cff5; color: #262626; font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="caption">
+      <b>층 이동 시스템 — 러프 레이아웃 목업 (전체화면 투명 오버레이)</b><br />
+      좌측 상단 <code>1F</code> 버튼(햄버거와 대칭) → 층 선택 모달 → 해금된 층 클릭 시
+      하단 바가 <b>shaft(건물 전체를 쌓은 컨테이너) 하나를 스크롤</b>하는 방식으로 이동.
+      아래 버튼으로 "1F → 5F" 실제 스윕을 재생해볼 수 있다.
+    </div>
+
+    <div class="screen">
+      <div class="desktop-note">↖ 투명 영역 (데스크탑 그대로 보이고 클릭 통과)</div>
+
+      <div class="bar">
+        <!-- shaft: 1F~5F를 물리적 순서(위=5F ... 아래=1F)로 쌓음. 이 요소 하나만 움직인다 -->
+        <div class="shaft" id="shaft">
+          <div class="floor-slice" id="slice-5F">
+            <div class="wall"><div class="layer-label">Wall</div></div>
+            <div class="floor"><div class="layer-label">Floor</div></div>
+            <div class="floor-label">5F</div>
+            <div class="furniture">🪑 가구</div>
+          </div>
+          <div class="floor-slice" id="slice-4F">
+            <div class="wall"><div class="layer-label">Wall</div></div>
+            <div class="floor"><div class="layer-label">Floor</div></div>
+            <div class="floor-label">4F</div>
+            <div class="furniture">🪑 가구</div>
+          </div>
+          <div class="floor-slice" id="slice-3F">
+            <div class="wall"><div class="layer-label">Wall</div></div>
+            <div class="floor"><div class="layer-label">Floor</div></div>
+            <div class="floor-label">3F</div>
+            <div class="furniture">🪑 가구</div>
+          </div>
+          <div class="floor-slice" id="slice-2F">
+            <div class="wall"><div class="layer-label">Wall</div></div>
+            <div class="floor"><div class="layer-label">Floor</div></div>
+            <div class="floor-label">2F</div>
+            <div class="furniture">🪑 가구</div>
+          </div>
+          <div class="floor-slice" id="slice-1F">
+            <div class="wall"><div class="layer-label">Wall</div></div>
+            <div class="floor"><div class="layer-label">Floor</div></div>
+            <div class="floor-label">1F</div>
+            <!-- Counter/MenuBoard: 1F 전용 (결정 사항) -->
+            <div class="counter">Counter</div>
+            <div class="menuboard">MenuBoard</div>
+            <div class="furniture">🪑 가구</div>
+          </div>
+        </div>
+
+        <!-- 우측 HUD: 기존 재화 + 햄버거 (shaft 바깥, 항상 고정) -->
+        <div class="hud-right">
+          <div class="pill">🪙 1,000</div>
+          <div class="icon-btn">☰</div>
+        </div>
+        <!-- 좌측 HUD: 신규 FloorIndicator (요구 1, shaft 바깥, 항상 고정) -->
+        <div class="hud-left">
+          <button class="floor-btn" id="floor-toggle" onclick="document.getElementById('floor-modal').classList.toggle('open')">1F</button>
+        </div>
+
+        <!-- 층 선택 모달 (요구 2·3) -->
+        <div class="floor-modal" id="floor-modal">
+          <div class="close" onclick="document.getElementById('floor-modal').classList.remove('open')">✕</div>
+          <h3>층 선택</h3>
+          <!-- level=5 예시(1~5F 해금): 6F/7F만 잠김. currentFloor=1F만 강조 표시. -->
+          <div class="floor-row locked">7F <span>🔒</span>
+            <div class="lock-overlay">🔒 잠김</div>
+          </div>
+          <div class="floor-row locked">6F <span>🔒</span>
+            <div class="lock-overlay">🔒 잠김</div>
+          </div>
+          <div class="floor-row" onclick="goTo(5)">5F</div>
+          <div class="floor-row" onclick="goTo(4)">4F</div>
+          <div class="floor-row" onclick="goTo(3)">3F</div>
+          <div class="floor-row" onclick="goTo(2)">2F</div>
+          <div class="floor-row current" id="row-1F" style="background: #d5dae3;" onclick="goTo(1)">1F (현재)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button onclick="goTo(5)">1F → 5F 이동 애니메이션 미리보기</button>
+      <button onclick="goTo(1)">1F로 복귀</button>
+    </div>
+
+    <div class="legend">
+      · 좌측 상단 <code>FloorIndicator</code>는 <code>Hud.tsx</code>의 햄버거 버튼(우측 상단)과
+      좌우 대칭 위치, <code>currentFloor</code>(예: <code>1F</code>)를 표시.<br />
+      · 클릭 시 뜨는 <b>층 선택 모달</b>은 <code>CafeMenuPanel</code>과 같은 화이트+그레이+하늘색
+      토큰, 잠금 행은 동일한 <code>rgba(0,0,0,0.7)</code> 오버레이 재사용.<br />
+      · <b>shaft 모델</b>: 5F~1F를 위→아래 물리적 순서로 쌓은 <code>#shaft</code> 하나만
+      <code>translateY</code>로 움직인다(뷰포트 <code>H=240px</code>, 최고층
+      <code>maxF</code>일 때 <code>offset(F) = (maxF - F) * H</code>,
+      <code>translateY = -offset(F)</code>).<br />
+      · 1F→5F 예시: 시작 <code>translateY(1F) = -960px</code> → 끝
+      <code>translateY(5F) = 0px</code>. 값이 <b>증가</b>(shaft가 아래로 흘러감)하면서
+      4F·3F·2F 슬라이스가 차례로 화면을 스쳐 지나간다 — 위층으로 갈수록 건물이
+      상대적으로 내려가는 <b>엘리베이터 시점</b>(요구 5·6). 아래층 이동은 반대로 값이
+      줄어들며 shaft가 위로 올라간다 — 부호 분기 없이 같은 offset 공식 하나로 처리.<br />
+      · 5F 슬라이스에는 <b>Counter/MenuBoard가 없다</b> — 1F 전용(결정 사항). 층마다 벽/바닥
+      색이 다른 건 스윕 진행을 눈으로 구분하기 위한 데모용 표시일 뿐, 지금 범위에선 실제로
+      모든 층이 같은 가구/스킨 데이터를 공유한다(층별 꾸미기는 후속 작업).
+    </div>
+
+    <script>
+      const H = 240;
+      function offset(floor, maxF) { return (maxF - floor) * H; }
+
+      function goTo(target) {
+        const shaft = document.getElementById("shaft");
+        const maxF = 5; // 데모 shaft는 1~5F 5개 슬라이스만 고정으로 그려뒀음
+        shaft.style.transform = "translateY(" + (-offset(target, maxF)) + "px)";
+
+        document.getElementById("floor-toggle").textContent = target + "F";
+        document.querySelectorAll(".floor-row").forEach((el) => el.classList.remove("current"));
+        const row = document.getElementById("row-1F");
+        if (target === 1) row.classList.add("current");
+
+        document.getElementById("floor-modal").classList.remove("open");
+      }
+    </script>
+  </body>
+</html>

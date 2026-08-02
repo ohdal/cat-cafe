@@ -4,7 +4,7 @@ import { create } from "zustand";
 export type Screen = "start" | "main";
 
 /** 화면에 띄울 수 있는 모달 종류. 필요할 때마다 여기에 추가합니다. */
-export type ModalName = "mainMenu" | "cafeMenu";
+export type ModalName = "mainMenu" | "cafeMenu" | "floorSelect";
 
 interface UiState {
   /** 현재 화면. */

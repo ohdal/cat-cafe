@@ -1,19 +1,18 @@
 import { useEffect, useRef } from "react";
-import Wall from "@/features/cafe/Wall";
-import Floor from "@/features/cafe/Floor";
-import Counter from "@/features/cafe/Counter";
-import MenuBoard from "@/features/cafe/MenuBoard";
 import Hud from "@/features/cafe/Hud";
-import FurnitureLayer from "@/features/decor/furniture/FurnitureLayer";
-import FurnitureGhost from "@/features/decor/furniture/FurnitureGhost";
+import FloorIndicator from "@/features/cafe/FloorIndicator";
+import FloorScene from "@/features/cafe/FloorScene";
+import { useFloorTransition, SLIDE_MS } from "@/features/cafe/useFloorTransition";
 import { useFurnitureStore } from "@/features/decor/furniture/useFurnitureStore";
 import { CATALOG } from "@/features/decor/furniture/catalog";
 
 /**
  * 카페 화면 구성.
  *
- * 레이어 순서(뒤 → 앞): 벽지 → 바닥 → 계산대/메뉴판 → 배치된 가구 → 배치 프리뷰(ghost) → HUD.
- * 각 요소는 나중에 상점 시스템에서 스킨을 교체할 수 있도록 별도 컴포넌트로 분리함.
+ * 뷰포트(이 컴포넌트 루트) 안에 "shaft"(이동 구간에 걸친 층을 물리적 순서로 쌓은
+ * 컨테이너, FloorScene 여러 개)가 있고, shaft 하나만 translateY로 움직여 건물이
+ * 카메라 앞을 지나가는 것처럼 보이게 한다 (plan/floor-navigation/README.md 참고).
+ * Hud/FloorIndicator는 shaft 바깥, 뷰포트에 직접 고정되어 이동 중에도 움직이지 않는다.
  *
  * 가구 배치 상호작용(마우스 추적/커밋/취소/z-order)은 여기서 처리한다:
  * 좌클릭 커밋, 우클릭 취소, 휠로 겹치는 가구 기준 z-order 조절.
@@ -27,6 +26,7 @@ export default function CafeScene() {
   const cancelPlacing = useFurnitureStore((s) => s.cancelPlacing);
   const removePlacing = useFurnitureStore((s) => s.removePlacing);
   const isPlacing = !!placing;
+  const { floors, translateY, isTransitioning } = useFloorTransition();
 
   // ESC로도 배치 취소 (우클릭과 동일한 경로). placing 객체는 마우스 이동마다
   // 새로 만들어지므로, 불필요한 리스너 재등록을 피하려 boolean만 deps에 둔다.
@@ -72,13 +72,20 @@ export default function CafeScene() {
         cyclePlacingZ(e.deltaY < 0 ? 1 : -1);
       }}
     >
-      <Wall />
-      <Floor />
-      <Counter />
-      <MenuBoard />
-      <FurnitureLayer />
-      <FurnitureGhost />
+      <div
+        className="absolute inset-x-0 top-0 flex flex-col"
+        style={{
+          transform: `translateY(${translateY}px)`,
+          transition: isTransitioning ? `transform ${SLIDE_MS}ms ease-in-out` : "none",
+        }}
+      >
+        {floors.map((floor) => (
+          <FloorScene key={floor} floor={floor} />
+        ))}
+      </div>
+
       <Hud />
+      <FloorIndicator />
       {placing && (
         <button
           type="button"

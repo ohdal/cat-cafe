@@ -13,10 +13,10 @@ const MainMenu = () => {
   const [category, setCategory] = useState<CategoryType>("shop");
 
   return (
-    <ModalOverlay onClose={closeModal} showCloseButton={false}>
+    <ModalOverlay onClose={closeModal} showCloseButton={false} padding="p-0">
       <div className="flex h-[400px] min-w-[640px] flex-row gap-3">
         <Sidebar category={category} onSelect={setCategory} />
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 p-2">
           {category === "shop" && <ShopPanel />}
           {category === "inventory" && <FurniturePanel />}
           {category === "setting" && <SettingPanel />}

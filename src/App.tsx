@@ -3,6 +3,7 @@ import StartScreen from "@/screens/StartScreen";
 import MainScreen from "@/screens/MainScreen";
 import MainMenu from "@/components/Menu/MainMenu";
 import CafeMenu from "@/components/Menu/CafeMenu";
+import FloorSelect from "@/components/Menu/FloorSelect";
 import AccrualTicker from "@/features/economy/AccrualTicker";
 import OfflineEarningsGate from "@/features/economy/OfflineEarningsGate";
 import { useInteractiveRegion } from "@/lib/interactiveRegion";
@@ -30,6 +31,7 @@ function App() {
       {/* 바 바깥(위쪽) 모달 오버레이 */}
       {screen === "main" && activeModal === "mainMenu" && <MainMenu />}
       {screen === "main" && activeModal === "cafeMenu" && <CafeMenu />}
+      {screen === "main" && activeModal === "floorSelect" && <FloorSelect />}
 
       {/* 화면 없는 로직 전용 컴포넌트: 적립 루프 + 오프라인 정산(지금은 OFF) 게이트 */}
       {screen === "main" && <AccrualTicker />}

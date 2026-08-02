@@ -6,8 +6,13 @@
 
 /** 메뉴 레벨 1당 그 메뉴 수익 배수(등비). L0→L10 ≈ ×20. */
 export const INCOME_GROWTH = 1.35;
-/** 메뉴 업그레이드 비용 기준 = 메뉴 기본수익 × 이 값. */
-export const UPGRADE_COST_FACTOR = 2;
+/**
+ * 메뉴 업그레이드 비용 기준 = 메뉴 기본수익 × 이 값.
+ * catalog.ts의 baseIncomePerHour를 ×20 올리면서(초반 체감 수익 상향), 업그레이드
+ * 비용은 그대로 유지하려고 이 값을 20으로 나눴다(2 → 0.1) — upgradeCost는
+ * baseIncomePerHour에 정비례라 이렇게 해야 이전과 같은 비용이 나온다.
+ */
+export const UPGRADE_COST_FACTOR = 0.1;
 /** 메뉴 레벨당 업그레이드 비용 증가율(등비). */
 export const UPGRADE_COST_GROWTH = 1.6;
 /** 메뉴 최대 레벨. */

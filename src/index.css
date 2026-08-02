@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
-/* text-* 폰트 크기만 25% 키운 스케일. spacing(--spacing 기반 w-/h-/p-/m-/gap-)은
-   건드리지 않도록 html font-size가 아니라 이 변수들만 오버라이드한다.
-   line-height 짝 변수(--text-*--line-height)는 unitless 비율이라 그대로 둬도
-   새 font-size에 맞춰 비례한다. */
+/* text-base 기준 22px(기본 16px 대비 ×1.375)로 키운 스케일. spacing(--spacing 기반
+   w-/h-/p-/m-/gap-)은 건드리지 않도록 html font-size가 아니라 이 변수들만
+   오버라이드한다. line-height 짝 변수(--text-*--line-height)는 unitless 비율이라
+   그대로 둬도 새 font-size에 맞춰 비례한다. */
 @theme {
-  --text-xs: 0.9375rem;
-  --text-sm: 1.09375rem;
-  --text-base: 1.25rem;
-  --text-lg: 1.40625rem;
-  --text-xl: 1.5625rem;
-  --text-2xl: 1.875rem;
-  --text-3xl: 2.34375rem;
-  --text-4xl: 2.8125rem;
+  --text-xs: 1.03125rem;
+  --text-sm: 1.203125rem;
+  --text-base: 1.375rem;
+  --text-lg: 1.546875rem;
+  --text-xl: 1.71875rem;
+  --text-2xl: 2.0625rem;
+  --text-3xl: 2.578125rem;
+  --text-4xl: 3.09375rem;
 }
 
 /* 모달 색상 시스템 — 화이트 + 그레이 + 하늘색(StartScreen 배경과 동일한 #a9cff5) 3색

@@ -6,6 +6,7 @@ import { useGameStore } from "@/store/useGameStore";
 import { useFurnitureStore } from "@/features/decor/furniture/useFurnitureStore";
 import { useDecorStore } from "@/features/decor/skins/useDecorStore";
 import { useMenuStore } from "@/features/menu/useMenuStore";
+import { useCafeStore } from "@/features/cafe/useCafeStore";
 
 /** 설정: 전체 음량 / 배경음 / 효과음 슬라이더 + 로컬 진행 초기화. */
 export default function SettingPanel() {
@@ -20,6 +21,7 @@ export default function SettingPanel() {
   const resetFurniture = useFurnitureStore((s) => s.reset);
   const resetMenu = useMenuStore((s) => s.reset);
   const resetSkins = useDecorStore((s) => s.reset);
+  const resetCafe = useCafeStore((s) => s.reset);
 
   const [confirming, setConfirming] = useState(false);
 
@@ -28,6 +30,7 @@ export default function SettingPanel() {
     resetFurniture();
     resetMenu();
     resetSkins();
+    resetCafe();
     setConfirming(false);
   }
 
@@ -45,7 +48,7 @@ export default function SettingPanel() {
               onClick={() => setConfirming(true)}
               className="rounded-md bg-modal-surface-alt px-3 py-1.5 text-xs font-medium text-modal-text transition hover:bg-modal-surface-hover"
             >
-              초기화 (재화·가구·메뉴 레벨·스킨)
+              게임 전체 초기화
             </button>
           ) : (
             <div className="flex items-center gap-2">
