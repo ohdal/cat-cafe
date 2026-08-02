@@ -21,6 +21,8 @@ interface DecorState {
    * 이미 보유한 스킨을 장착한다 (꾸미기 전용). 미보유 스킨은 장착할 수 없고 false.
    */
   equipSkin: (kind: SkinKind, id: string) => boolean;
+  /** 보유·장착 스킨을 기본 벽지/바닥으로 되돌린다. 설정의 "초기화" 버튼 전용. */
+  reset: () => void;
 }
 
 /** 벽지/바닥 스킨 보유·장착 상태 (zustand + persist). */
@@ -54,6 +56,14 @@ export const useDecorStore = create<DecorState>()(
         set({ [activeKey]: id } as Partial<DecorState>);
         return true;
       },
+
+      reset: () =>
+        set({
+          ownedWallSkins: [DEFAULT_WALL],
+          ownedFloorSkins: [DEFAULT_FLOOR],
+          activeWallSkin: DEFAULT_WALL,
+          activeFloorSkin: DEFAULT_FLOOR,
+        }),
     }),
     {
       name: "cat-cafe-decor",

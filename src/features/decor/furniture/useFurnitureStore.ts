@@ -54,6 +54,8 @@ interface FurnitureState {
   removePlacing: () => void;
   /** 재화를 차감하고 보유 수량을 늘린다. 잔액 부족하면 차감 없이 false. */
   buy: (typeId: FurnitureTypeId) => boolean;
+  /** 배치된 가구·보유 수량을 전부 비운다. 설정의 "초기화" 버튼 전용. */
+  reset: () => void;
 }
 
 /**
@@ -172,6 +174,8 @@ export const useFurnitureStore = create<FurnitureState>()(
         set((s) => ({ owned: { ...s.owned, [typeId]: (s.owned[typeId] ?? 0) + 1 } }));
         return true;
       },
+
+      reset: () => set({ placed: [], owned: {}, placing: null }),
     }),
     {
       name: "cat-cafe-furniture",

@@ -13,7 +13,6 @@ import DecorTabBar from "@/features/decor/DecorTabBar";
 import ShopItemDetail from "@/features/decor/ShopItemDetail";
 import Empty from "@/components/Empty";
 import CurrencyDisplay from "@/components/CurrencyDisplay";
-import { useGameStore } from "@/store/useGameStore";
 import { PANEL_PADDING } from "@/components/Menu/panelStyles";
 
 const SLIDE_MS = 300;
@@ -33,7 +32,6 @@ export default function ShopPanel() {
   const [displayed, setDisplayed] = useState<DecorEntry | null>(null);
   const [open, setOpen] = useState(false);
 
-  const currency = useGameStore((s) => s.currency);
   const furnitureOwned = useFurnitureStore((s) => s.owned);
   const ownedWallSkins = useDecorStore((s) => s.ownedWallSkins);
   const ownedFloorSkins = useDecorStore((s) => s.ownedFloorSkins);
@@ -63,7 +61,7 @@ export default function ShopPanel() {
     <div className={`flex h-full flex-col ${PANEL_PADDING}`}>
       <div className="mb-1 flex items-center justify-between gap-2">
         <DecorTabBar tab={tab} onChange={setTab} />
-        <CurrencyDisplay amount={currency} />
+        <CurrencyDisplay />
       </div>
       <div className="mb-2 flex justify-end">
         <label className="flex items-center gap-1 text-[11px] text-slate-300">
