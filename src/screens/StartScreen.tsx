@@ -8,7 +8,7 @@ export default function StartScreen() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center bg-[#a9cff5]">
       <img src="/title-logo.png" alt="Nyan Cafe" className="h-44 w-auto" />
-      <ButtonComp.Solid onClick={() => setScreen("main")} className="-mt-5 px-4 py-1 text-xs">
+      <ButtonComp.Solid onClick={() => setScreen("main")} className="-mt-7 px-4 py-1 text-xs">
         START
       </ButtonComp.Solid>
     </div>
