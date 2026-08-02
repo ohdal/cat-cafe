@@ -13,11 +13,11 @@ export default function OfflineEarningsModal({ elapsedSec, gained, onClose }: Pr
 
   return (
     <ModalOverlay onClose={onClose}>
-      <div className="flex min-w-72 flex-col items-center gap-2 p-2 text-center text-sm text-slate-100">
+      <div className="flex min-w-[288px] flex-col items-center gap-2 p-2 text-center text-sm text-modal-text">
         <p>
           {hours}시간 {minutes}분 동안 자리를 비운 사이
         </p>
-        <p className="text-lg font-semibold text-amber-300">+🪙{Math.floor(gained).toLocaleString()}</p>
+        <p className="text-lg font-semibold text-currency-accent">+🪙{Math.floor(gained).toLocaleString()}</p>
       </div>
     </ModalOverlay>
   );

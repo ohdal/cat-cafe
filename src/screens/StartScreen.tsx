@@ -1,14 +1,15 @@
 import { ButtonComp } from "@/components/ButtonComp";
 import { useUiStore } from "@/store/useUiStore";
 
-/** 시작 화면: 정중앙 "게임 시작" 버튼 하나. */
+/** 시작 화면: 타이틀 로고 + 그 아래 "START" 버튼. 배경은 로고의 하늘색과 통일. */
 export default function StartScreen() {
   const setScreen = useUiStore((s) => s.setScreen);
 
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <ButtonComp.Solid onClick={() => setScreen("main")} className="px-8 py-4 text-lg">
-        게임 시작
+    <div className="flex flex-1 flex-col items-center justify-center bg-[#a9cff5]">
+      <img src="/title-logo.png" alt="Nyan Cafe" className="h-44 w-auto" />
+      <ButtonComp.Solid onClick={() => setScreen("main")} className="-mt-5 px-4 py-1 text-xs">
+        START
       </ButtonComp.Solid>
     </div>
   );

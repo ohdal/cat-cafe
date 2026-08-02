@@ -38,18 +38,18 @@ export default function SettingPanel() {
         <VolumeSlider label="배경음" value={bgmVolume} onChange={setBgmVolume} />
         <VolumeSlider label="효과음" value={sfxVolume} onChange={setSfxVolume} />
 
-        <div className="mt-2 border-t border-[#ffffff1a] pt-3">
+        <div className="mt-2 border-t border-modal-border pt-3">
           {!confirming ? (
             <button
               type="button"
               onClick={() => setConfirming(true)}
-              className="rounded-md bg-[#ffffff1a] px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-[#ffffff26]"
+              className="rounded-md bg-modal-surface-alt px-3 py-1.5 text-xs font-medium text-modal-text transition hover:bg-modal-surface-hover"
             >
               초기화 (재화·가구·메뉴 레벨·스킨)
             </button>
           ) : (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-300">정말 초기화할까요? 되돌릴 수 없어요.</span>
+              <span className="text-xs text-modal-text-muted">정말 초기화할까요? 되돌릴 수 없어요.</span>
               <button
                 type="button"
                 onClick={handleReset}
@@ -60,7 +60,7 @@ export default function SettingPanel() {
               <button
                 type="button"
                 onClick={() => setConfirming(false)}
-                className="rounded-md bg-[#ffffff1a] px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:bg-[#ffffff26]"
+                className="rounded-md bg-modal-surface-alt px-3 py-1.5 text-xs font-medium text-modal-text transition hover:bg-modal-surface-hover"
               >
                 취소
               </button>

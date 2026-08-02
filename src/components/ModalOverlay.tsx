@@ -6,7 +6,7 @@ interface ModalOverlayProps {
   children: ReactNode;
   /** ✕ 닫기 버튼 노출 여부. 다른 방식(예: 토글 버튼)으로 닫는 모달은 false로 끈다. */
   showCloseButton?: boolean;
-  /** 패널 배경색 utility 클래스. 기본은 살짝 투명. */
+  /** 패널 배경색 utility 클래스. 기본은 불투명 modal-surface. */
   background?: string;
 }
 
@@ -18,21 +18,21 @@ export default function ModalOverlay({
   onClose,
   children,
   showCloseButton = true,
-  background = "bg-[#0f172bf2]",
+  background = "bg-modal-surface",
 }: ModalOverlayProps) {
   const ref = useInteractiveRegion<HTMLDivElement>("modal-overlay");
 
   return (
     <div
       ref={ref}
-      className={`absolute bottom-[252px] left-1/2 z-20 -translate-x-1/2 rounded-lg border border-[#ffffff1a] ${background} p-2 shadow-lg`}
+      className={`absolute bottom-63 left-1/2 z-20 -translate-x-1/2 rounded-lg border border-modal-border ${background} p-2 shadow-lg`}
     >
       {showCloseButton && (
         <button
           type="button"
           aria-label="닫기"
           onClick={onClose}
-          className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#ffffff26] text-xs text-white hover:bg-[#ffffff40]"
+          className="absolute right-2 top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-modal-surface-hover text-xs text-modal-text hover:bg-modal-border"
         >
           ✕
         </button>

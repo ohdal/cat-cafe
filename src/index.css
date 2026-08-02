@@ -1,5 +1,38 @@
 @import "tailwindcss";
 
+/* text-* 폰트 크기만 25% 키운 스케일. spacing(--spacing 기반 w-/h-/p-/m-/gap-)은
+   건드리지 않도록 html font-size가 아니라 이 변수들만 오버라이드한다.
+   line-height 짝 변수(--text-*--line-height)는 unitless 비율이라 그대로 둬도
+   새 font-size에 맞춰 비례한다. */
+@theme {
+  --text-xs: 0.9375rem;
+  --text-sm: 1.09375rem;
+  --text-base: 1.25rem;
+  --text-lg: 1.40625rem;
+  --text-xl: 1.5625rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: 2.34375rem;
+  --text-4xl: 2.8125rem;
+}
+
+/* 모달 색상 시스템 — 화이트 + 그레이 + 하늘색(StartScreen 배경과 동일한 #a9cff5) 3색
+   조합. 값은 placeholder — 디자이너가 확정하면 이 블록만 고치면 모든 모달(MainMenu/
+   CafeMenu/ShopItemDetail 등)에 한 번에 반영된다. 컴포넌트에서는 절대 bg-[#hex]
+   하드코딩하지 말고 bg-modal-surface 같은 시맨틱 클래스만 쓸 것.
+   재화(골드) 강조색은 이 팔레트와 별개로 --color-currency-accent로 분리 유지. */
+@theme {
+  --color-modal-surface: #f5f6f8;
+  --color-modal-surface-alt: #e8ebf0;
+  --color-modal-surface-hover: #d5dae3;
+  --color-modal-border: #c2c9d6;
+  --color-modal-text: #262626;
+  --color-modal-text-muted: #5c5c5c;
+  --color-modal-accent: #a9cff5;
+  --color-modal-accent-hover: #8ec3f2;
+
+  --color-currency-accent: #d97706;
+}
+
 /* Tailwind v4 wraps `hover:`/`group-hover:` in `@media (hover: hover)` by default
    (to avoid sticky-hover on touchscreens). This Tauri/WebKit webview evaluates that
    media feature as false, so every hover effect in the app was silently dead. Drop
@@ -15,6 +48,10 @@
     margin: 0;
     height: 100%;
     background: transparent;
+  }
+
+  body {
+    font-family: "Cute Font", cursive;
   }
 }
 

@@ -8,9 +8,9 @@ interface VolumeSliderProps {
 export default function VolumeSlider({ label, value, onChange }: VolumeSliderProps) {
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between text-xs text-slate-200">
+      <div className="flex items-center justify-between text-xs text-modal-text">
         <span>{label}</span>
-        <span className="text-slate-400">{value}</span>
+        <span className="text-modal-text-muted">{value}</span>
       </div>
       <input
         type="range"
@@ -18,7 +18,7 @@ export default function VolumeSlider({ label, value, onChange }: VolumeSliderPro
         max={100}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-[#ffffff1a] accent-amber-500"
+        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-modal-surface-hover accent-modal-accent"
       />
     </div>
   );

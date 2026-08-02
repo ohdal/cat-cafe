@@ -27,7 +27,7 @@ export default function SkinShopItem({ skin, onSelect }: Props) {
         isOwned ? "opacity-40" : ""
       }`}
     >
-      <span className="absolute bottom-1 right-1 rounded bg-[#00000099] px-1 text-[9px] leading-tight text-white">
+      <span className="absolute bottom-1 right-1 rounded bg-[rgba(0,0,0,0.6)] px-1 text-[9px] leading-tight text-white">
         {isOwned ? "보유" : `🪙${skin.price}`}
       </span>
     </button>

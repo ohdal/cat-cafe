@@ -33,11 +33,11 @@ export default function ShopItemDetail({ entry, onBack }: Props) {
   }
 
   return (
-    <div className="flex h-full w-full flex-col border-l border-[#ffffff26] bg-[#111827] p-2">
+    <div className="flex h-full w-full flex-col border-l border-modal-border bg-modal-surface-alt p-2">
       <button
         type="button"
         onClick={onBack}
-        className="self-start rounded-md px-2 py-1 text-xs text-slate-300 transition hover:bg-[#ffffff1a]"
+        className="self-start rounded-md px-2 py-1 text-xs text-modal-text-muted transition hover:bg-modal-surface-hover"
       >
         ✕ 닫기
       </button>
@@ -46,12 +46,12 @@ export default function ShopItemDetail({ entry, onBack }: Props) {
           <span className="text-5xl leading-none">{entry.item.icon}</span>
         ) : (
           <div
-            className="h-16 w-16 rounded-md border border-[#ffffff26]"
+            className="h-16 w-16 rounded-md border border-modal-border"
             style={skinFillStyle(entry.item.fill)}
           />
         )}
-        <h3 className="text-center text-sm font-semibold text-white">{entry.item.name}</h3>
-        <p className="max-w-full text-center text-[11px] text-slate-300">{entry.item.description}</p>
+        <h3 className="text-center text-sm font-semibold text-modal-text">{entry.item.name}</h3>
+        <p className="max-w-full text-center text-[11px] text-modal-text-muted">{entry.item.description}</p>
       </div>
       <button
         type="button"
@@ -59,8 +59,8 @@ export default function ShopItemDetail({ entry, onBack }: Props) {
         onClick={handleBuy}
         className={`rounded-md py-2 text-sm font-medium transition ${
           buyDisabled
-            ? "cursor-not-allowed bg-[#ffffff1a] text-slate-400"
-            : "bg-amber-600 text-white hover:bg-amber-500"
+            ? "cursor-not-allowed bg-modal-surface-hover text-modal-text-muted"
+            : "bg-modal-accent text-modal-text hover:bg-modal-accent-hover"
         }`}
       >
         {isOwnedSkin ? "보유중" : `구매하기 🪙${entry.item.price}`}

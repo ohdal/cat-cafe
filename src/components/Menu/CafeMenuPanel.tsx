@@ -32,8 +32,8 @@ const UpgradeButton = memo(function UpgradeButton({
       onClick={() => upgrade(menuId)}
       className={`shrink-0 rounded-md px-2 py-1 text-[11px] font-medium transition ${
         disabled
-          ? "cursor-not-allowed bg-[#ffffff1a] text-slate-400"
-          : "bg-emerald-700 text-emerald-50 hover:bg-emerald-600"
+          ? "cursor-not-allowed bg-modal-surface-hover text-modal-text-muted"
+          : "bg-modal-accent text-modal-text hover:bg-modal-accent-hover"
       }`}
     >
       업그레이드
@@ -63,21 +63,21 @@ const MenuRow = memo(function MenuRow({ id, name, icon, floor, baseIncomePerHour
   const atMax = level >= MAX_MENU_LEVEL;
 
   return (
-    <div className="relative flex items-center gap-2 rounded-md bg-[#ffffff0d] p-2">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#ffffff14] text-lg">
+    <div className="relative flex items-center gap-2 rounded-md bg-modal-surface-alt p-2">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-modal-surface-hover text-lg">
         {icon}
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-xs font-medium text-white">{name}</p>
-        <p className="text-[11px] text-amber-200">🪙 1시간당 {income}</p>
+        <p className="truncate text-xs font-medium text-modal-text">{name}</p>
+        <p className="text-[11px] text-currency-accent">🪙 1시간당 {income}</p>
       </div>
 
       <div className="flex w-24 shrink-0 flex-col items-center gap-0.5">
-        <span className="text-[11px] text-slate-300">Lv.{level}</span>
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#ffffff1a]">
+        <span className="text-[11px] text-modal-text-muted">Lv.{level}</span>
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-modal-surface-hover">
           <div
-            className="h-full rounded-full bg-emerald-500"
+            className="h-full rounded-full bg-modal-accent"
             style={{ width: `${(level / MAX_MENU_LEVEL) * 100}%` }}
           />
         </div>
@@ -86,9 +86,9 @@ const MenuRow = memo(function MenuRow({ id, name, icon, floor, baseIncomePerHour
       <UpgradeButton menuId={id} cost={cost} blocked={!unlocked || atMax} />
 
       {!unlocked && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-[#000000b3]">
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-md bg-[rgba(0,0,0,0.7)]">
           <span className="text-lg">🔒</span>
-          <span className="ml-1 text-[11px] text-slate-200">{floor}F에서 해금</span>
+          <span className="ml-1 text-[11px] text-white">{floor}F에서 해금</span>
         </div>
       )}
     </div>
@@ -102,10 +102,10 @@ export default function CafeMenuPanel() {
   const menus = useMemo(() => selectMenusByFloor(), []);
 
   return (
-    <div className="flex h-100 w-160 flex-col gap-2 p-1">
+    <div className="flex h-[400px] w-[640px] flex-col gap-2 p-1">
       <div className="text-center">
-        <h2 className="text-sm font-semibold text-white">☕ 카페 메뉴 ☕</h2>
-        <p className="text-[11px] text-slate-300">현재 총수익 {Math.round(goldPerHour).toLocaleString()} Gold/Hour</p>
+        <h2 className="text-sm font-semibold text-modal-text">☕ 카페 메뉴 ☕</h2>
+        <p className="text-[11px] text-modal-text-muted">현재 총수익 {Math.round(goldPerHour).toLocaleString()} Gold/Hour</p>
       </div>
 
       <div className="no-scrollbar flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto">
@@ -122,7 +122,7 @@ export default function CafeMenuPanel() {
         ))}
       </div>
 
-      <p className="text-center text-[11px] text-slate-400">
+      <p className="text-center text-[11px] text-modal-text-muted">
         ☆ 메뉴 레벨이 높을수록 1시간당 벌어들이는 골드가 증가합니다.
       </p>
     </div>

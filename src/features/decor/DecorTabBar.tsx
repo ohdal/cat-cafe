@@ -14,9 +14,9 @@ export default function DecorTabBar({ tab, onChange }: Props) {
           key={t.id}
           type="button"
           onClick={() => onChange(t.id)}
-          className={`relative rounded-md px-2 py-1 text-xs text-white transition hover:bg-[#ffffff1a] ${
+          className={`relative rounded-md px-2 py-1 text-xs text-modal-text transition hover:bg-modal-surface-hover ${
             tab === t.id
-              ? "after:absolute after:inset-0 after:rounded-md after:border-2 after:border-amber-400 after:content-['']"
+              ? "after:absolute after:inset-0 after:rounded-md after:border-2 after:border-modal-accent after:content-['']"
               : ""
           }`}
         >

@@ -21,11 +21,13 @@ export default function ShopItem({ type, onSelect }: Props) {
         type="button"
         onClick={onSelect}
         className={`relative flex h-full w-full items-center justify-center rounded-md text-lg transition ${
-          canAfford ? "bg-[#ffffff0d] hover:bg-[#ffffff1a]" : "bg-[#ffffff0d] opacity-40 hover:bg-[#ffffff1a]"
+          canAfford
+            ? "bg-modal-surface-alt hover:bg-modal-surface-hover"
+            : "bg-modal-surface-alt opacity-40 hover:bg-modal-surface-hover"
         }`}
       >
         <span>{type.icon}</span>
-        <span className="pointer-events-none absolute bottom-1 right-1 rounded bg-[#00000099] px-1 text-[9px] leading-tight text-white">
+        <span className="pointer-events-none absolute bottom-1 right-1 rounded bg-[rgba(0,0,0,0.6)] px-1 text-[9px] leading-tight text-white">
           🪙{type.price}
         </span>
       </button>

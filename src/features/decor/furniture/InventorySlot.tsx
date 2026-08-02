@@ -35,15 +35,17 @@ export default function InventorySlot({ type }: Props) {
           startPlacing(type.id);
         }}
         className={`relative flex h-full w-full items-center justify-center rounded-md text-lg transition ${
-          disabled ? "cursor-not-allowed bg-[#ffffff0d] opacity-40" : "bg-[#ffffff0d] hover:bg-[#ffffff1a]"
+          disabled
+            ? "cursor-not-allowed bg-modal-surface-alt opacity-40"
+            : "bg-modal-surface-alt hover:bg-modal-surface-hover"
         } ${
           isPlacingThis
-            ? "after:absolute after:inset-0 after:rounded-md after:border-2 after:border-dashed after:border-amber-500 after:content-['']"
+            ? "after:absolute after:inset-0 after:rounded-md after:border-2 after:border-dashed after:border-modal-accent after:content-['']"
             : ""
         }`}
       >
         {type.icon}
-        <span className="pointer-events-none absolute bottom-1 right-1 rounded bg-[#00000099] px-1 text-[9px] leading-tight text-white">
+        <span className="pointer-events-none absolute bottom-1 right-1 rounded bg-[rgba(0,0,0,0.6)] px-1 text-[9px] leading-tight text-white">
           ×{available}
         </span>
       </button>

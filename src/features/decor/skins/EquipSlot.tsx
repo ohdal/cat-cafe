@@ -31,12 +31,12 @@ export default function EquipSlot({ skin }: Props) {
         isOwned ? "hover:brightness-110" : "cursor-not-allowed opacity-40"
       } ${
         isActive
-          ? "after:absolute after:inset-0 after:rounded-md after:border-2 after:border-amber-400 after:content-['']"
+          ? "after:absolute after:inset-0 after:rounded-md after:border-2 after:border-modal-accent after:content-['']"
           : ""
       }`}
     >
       {!isOwned && (
-        <span className="pointer-events-none absolute bottom-1 right-1 rounded bg-[#00000099] px-1 text-[9px] leading-tight text-white">
+        <span className="pointer-events-none absolute bottom-1 right-1 rounded bg-[rgba(0,0,0,0.6)] px-1 text-[9px] leading-tight text-white">
           미보유
         </span>
       )}

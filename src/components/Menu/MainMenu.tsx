@@ -13,8 +13,8 @@ const MainMenu = () => {
   const [category, setCategory] = useState<CategoryType>("shop");
 
   return (
-    <ModalOverlay onClose={closeModal} showCloseButton={false} background="bg-[#0f172b]">
-      <div className="flex h-100 min-w-160 flex-row gap-3">
+    <ModalOverlay onClose={closeModal} showCloseButton={false}>
+      <div className="flex h-[400px] min-w-[640px] flex-row gap-3">
         <Sidebar category={category} onSelect={setCategory} />
         <div className="min-w-0 flex-1">
           {category === "shop" && <ShopPanel />}

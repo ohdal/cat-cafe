@@ -64,7 +64,7 @@ export default function ShopPanel() {
         <CurrencyDisplay />
       </div>
       <div className="mb-2 flex justify-end">
-        <label className="flex items-center gap-1 text-[11px] text-slate-300">
+        <label className="flex items-center gap-1 text-[11px] text-modal-text-muted">
           <input
             type="checkbox"
             checked={hideOwned}

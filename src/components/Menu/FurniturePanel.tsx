@@ -59,8 +59,8 @@ export default function FurniturePanel() {
           aria-pressed={placementMode}
           className={`relative rounded-md px-2 py-1 text-xs transition ${
             placementMode
-              ? "bg-amber-600 text-white after:absolute after:inset-0 after:rounded-md after:border-2 after:border-amber-200 after:content-['']"
-              : "bg-[#ffffff1a] text-slate-200 hover:bg-[#ffffff26]"
+              ? "bg-modal-accent text-modal-text after:absolute after:inset-0 after:rounded-md after:border-2 after:border-modal-accent-hover after:content-['']"
+              : "bg-modal-surface-alt text-modal-text hover:bg-modal-surface-hover"
           }`}
         >
           배치모드 {placementMode ? "ON" : "OFF"}
